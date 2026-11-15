@@ -1,0 +1,13 @@
+.env
+.venv/
+venv/
+**/__pycache__/
+deploy/
+data/raw/
+data/harmonized/
+data/*.csv
+data/*.log
+data/forecast/.power-cache/
+data/forecast/features.npy
+data/forecast/weather.npz
+test.py

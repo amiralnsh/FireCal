@@ -1,0 +1,15 @@
+.env
+.venv/
+venv/
+__pycache__/
+data/raw/
+data/harmonized/
+data/*.csv
+data/*.log
+data/firecal.duckdb
+data/firecal.building*
+data/forecast/.power-cache/
+data/forecast/features.npy
+data/forecast/weather.npz
+deploy/push.log
+FireCal-QR*.png

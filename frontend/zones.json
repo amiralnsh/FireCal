@@ -1,0 +1,76 @@
+{
+  "note": "Круги ОРИЕНТИРОВОЧНЫЕ. Публичные источники дают только названия районов и номера зон, без координат границ. Для точного анализа замени записи ниже официальными данными (lat, lon, radius_km) и поставь approx: false.",
+  "zones": [
+    {
+      "id": "U-25",
+      "name": "Зона U-25 (область Улытау, Казахстан)",
+      "lat": 47.48,
+      "lon": 67.24,
+      "radius_km": 40,
+      "approx": true,
+      "source": "Semenkov et al., Fire 2026 (MDPI): около 50 км к юго-западу от Жезказгана. Центр рассчитан по этому описанию.",
+      "note": "Первые ступени Союз-2.1а с Байконура. Радиус условный.",
+      "id_en": "U-25",
+      "name_en": "Zone U-25 (Ulytau region, Kazakhstan)",
+      "source_en": "Semenkov et al., Fire 2026 (MDPI): about 50 km south-west of Zhezkazgan. The centre is computed from this description.",
+      "note_en": "First stages of Soyuz-2.1a from Baikonur. The radius is nominal."
+    },
+    {
+      "id": "120-a",
+      "name": "Зона 120-а (Костанайская область, Казахстан)",
+      "lat": 49.25,
+      "lon": 64.08,
+      "radius_km": 40,
+      "approx": true,
+      "source": "Semenkov et al., Fire 2026 (MDPI): около 60 км к юго-востоку от села Тургай. Центр рассчитан по этому описанию.",
+      "note": "Радиус условный.",
+      "id_en": "120-a",
+      "name_en": "Zone 120-a (Kostanay region, Kazakhstan)",
+      "source_en": "Semenkov et al., Fire 2026 (MDPI): about 60 km south-east of the village of Turgay. The centre is computed from this description.",
+      "note_en": "The radius is nominal."
+    },
+    {
+      "id": "Алтай: Улаганский р-н",
+      "name": "Улаганский район (Респ. Алтай)",
+      "lat": 50.6,
+      "lon": 87.97,
+      "radius_km": 50,
+      "approx": true,
+      "source": "amic.ru: районы падения расположены в границах Чойского, Турочакского и Улаганского районов. Здесь взят центр района (село Улаган).",
+      "note": "Это ориентир по району, а не граница зоны падения.",
+      "id_en": "Altai: Ulagan district",
+      "name_en": "Ulagan district (Altai Republic)",
+      "source_en": "amic.ru: drop areas lie within the Choya, Turochak and Ulagan districts. The district centre (village of Ulagan) is used here.",
+      "note_en": "A district-level marker, not the boundary of a drop zone."
+    },
+    {
+      "id": "Алтай: Турочакский р-н",
+      "name": "Турочакский район (Респ. Алтай)",
+      "lat": 52.26,
+      "lon": 87.12,
+      "radius_km": 50,
+      "approx": true,
+      "source": "amic.ru (см. выше). Взят центр района (село Турочак).",
+      "note": "Ориентир по району, а не граница зоны.",
+      "id_en": "Altai: Turochak district",
+      "name_en": "Turochak district (Altai Republic)",
+      "source_en": "amic.ru (see above). The district centre (village of Turochak) is used.",
+      "note_en": "A district-level marker, not the boundary of a zone."
+    },
+    {
+      "id": "Алтай: Чойский р-н",
+      "name": "Чойский район (Респ. Алтай)",
+      "lat": 51.35,
+      "lon": 86.0,
+      "radius_km": 50,
+      "approx": true,
+      "source": "amic.ru (см. выше). Взят центр района (село Чоя), координаты округлены.",
+      "note": "Ориентир по району, а не граница зоны.",
+      "id_en": "Altai: Choya district",
+      "name_en": "Choya district (Altai Republic)",
+      "source_en": "amic.ru (see above). The district centre (village of Choya) is used, coordinates rounded.",
+      "note_en": "A district-level marker, not the boundary of a zone."
+    }
+  ],
+  "note_en": "Circles are APPROXIMATE. Public sources give only district names and zone numbers, without boundary coordinates. For a precise analysis replace the entries below with official data (lat, lon, radius_km) and set approx: false."
+}

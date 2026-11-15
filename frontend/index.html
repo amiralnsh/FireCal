@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FireCal</title>
+  <link rel="stylesheet" href="vendor/leaflet/dist/leaflet.css">
+  <link rel="stylesheet" href="vendor/leaflet-draw/dist/leaflet.draw.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="stars" aria-hidden="true"></canvas>
+  <div class="loadbar" aria-hidden="true"></div>
+  <header class="masthead">
+    <button class="brand" id="home" data-i18n-aria="return_globe"><span class="brand-mark" aria-hidden="true"></span> FireCal</button>
+    <span class="header-label"><span class="live-dot" aria-hidden="true"></span><span data-i18n="atlas_label">Спутниковый атлас</span></span>
+    <div class="header-actions">
+      <div class="work-actions" hidden>
+        <button id="helpButton" class="icon-button" data-i18n-title="help_t" data-i18n-aria="help_t">?</button>
+        <details class="export-menu">
+          <summary><span aria-hidden="true">↓</span> <span data-i18n="export_title">Экспорт</span></summary>
+          <div>
+            <button id="exportCsv" data-i18n="csv">CSV</button>
+            <button id="exportPng" data-i18n="png">PNG календаря</button>
+            <button id="exportMap" data-i18n="map_png">PNG карты</button>
+          </div>
+        </details>
+        <button id="share" data-i18n-title="share_t" data-i18n="share">Ссылка</button>
+      </div>
+      <button id="theme" class="icon-button" data-i18n-title="theme_t" data-i18n-aria="theme_t"><span class="theme-icon" aria-hidden="true"></span></button>
+      <button id="lang" class="icon-button" data-i18n-title="lang_t">EN</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="landing" class="overview" aria-labelledby="overviewTitle">
+      <div class="overview-copy">
+        <p class="eyebrow reveal" data-i18n="landing_eyebrow">NASA Space Apps · MODIS + VIIRS</p>
+        <h1 id="overviewTitle" class="reveal">FireCal<span aria-hidden="true">.</span></h1>
+        <p class="reveal" data-i18n="overview_subtitle">Атлас тепловых аномалий по архиву NASA FIRMS</p>
+        <ul class="landing-stats reveal" id="landingStats" aria-live="polite"></ul>
+        <button id="explore" class="primary reveal"><span data-i18n="explore">Исследовать архив</span><span aria-hidden="true">→</span></button>
+        <p id="landingCoverage" class="landing-coverage reveal"></p>
+      </div>
+      <figure class="globe-figure">
+        <div class="globe-halo" aria-hidden="true"></div>
+        <div id="globe" tabindex="0" data-i18n-aria="globe_label"><canvas aria-hidden="true"></canvas></div>
+        <figcaption><span data-i18n="coverage_legend">Границы архива</span><a href="https://science.nasa.gov/earth/earth-observatory/blue-marble-next-generation/">Blue Marble · NASA Earth Observatory</a></figcaption>
+      </figure>
+    </section>
+
+    <section id="atlas" class="workspace" hidden aria-labelledby="mapTitle">
+      <section id="quickstart" class="quickstart panel" hidden aria-labelledby="quickstartTitle">
+        <div class="quickstart-head">
+          <p class="eyebrow" id="quickstartTitle" data-i18n="qs_title">Как начать</p>
+          <button id="quickstartClose" class="icon-button ghost" data-i18n-aria="qs_close" data-i18n-title="qs_close">×</button>
+        </div>
+        <ol class="quickstart-steps">
+          <li><button data-step="area"><span class="step-no">01</span><b data-i18n="qs_area">Выберите область</b><small data-i18n="qs_area_sub">Нарисуйте прямоугольник на карте или оставьте весь регион</small></button></li>
+          <li><button data-step="period"><span class="step-no">02</span><b data-i18n="qs_period">Задайте период</b><small data-i18n="qs_period_sub">Быстрые кнопки: весь архив, последний год, весенний сезон</small></button></li>
+          <li><button data-step="calendar"><span class="step-no">03</span><b data-i18n="qs_calendar">Смотрите календарь</b><small data-i18n="qs_calendar_sub">Какие месяцы и годы горели сильнее обычного</small></button></li>
+        </ol>
+      </section>
+
+      <div class="dashboard">
+        <section class="map-panel panel">
+          <div class="map-heading">
+            <div><h2 id="mapTitle" tabindex="-1" data-i18n="map_title">Карта термоточек</h2><p id="mapCoordinates"></p></div>
+            <div class="mode-switch" role="group" data-i18n-aria="mode_label">
+              <span class="mode-indicator" aria-hidden="true"></span>
+              <button id="modeArchive" class="mode on" aria-pressed="true" data-i18n="mode_archive">Архив</button>
+              <button id="compareToggle" class="mode" aria-controls="compareControls" aria-expanded="false" data-i18n="compare_title">Сравнить годы</button>
+              <button id="riskToggle" class="mode" aria-controls="riskControls" aria-expanded="false" data-i18n="risk_toggle">Прогноз</button>
+            </div>
+          </div>
+          <div id="compareControls" class="compare-controls" hidden>
+            <label><span data-i18n="year_left">Год слева</span><select id="compareLeft"></select></label>
+            <label><span data-i18n="year_right">Год справа</span><select id="compareRight"></select></label>
+            <label><span data-i18n="compare_period">Общий период</span><select id="compareMonth"></select></label>
+            <p id="compareStatus" role="status"></p>
+          </div>
+          <div class="map-frame">
+            <div id="map"></div>
+            <button id="mapHint" class="map-hint" hidden><span class="map-hint-icon" aria-hidden="true"></span><span data-i18n="map_hint">Нарисуйте область на карте</span></button>
+            <div id="compareOverlay" class="compare-overlay" hidden>
+              <div id="compareLabelLeft" class="side-label"></div><div id="compareLabelRight" class="side-label"></div>
+              <div class="swipe-line" aria-hidden="true"></div>
+              <input type="range" id="swipe" min="5" max="95" value="50" data-i18n-aria="swipe_label">
+            </div>
+          </div>
+          <section id="riskControls" class="risk-controls" hidden>
+            <div class="risk-row">
+              <label><span data-i18n="risk_day">Дата выпуска (UTC)</span> <input type="date" id="riskDate"></label>
+              <label><span data-i18n="risk_horizon">Горизонт</span>
+                <select id="riskHorizon"><option value="7" data-i18n="risk_h7">7 дней</option><option value="1" data-i18n="risk_h1">следующие сутки</option></select>
+              </label>
+              <label><span data-i18n="risk_mode">Показать</span>
+                <select id="riskMode"><option value="p" data-i18n="risk_mode_p">вероятность</option><option value="ratio" data-i18n="risk_mode_ratio">отношение к норме</option></select>
+              </label>
+            </div>
+            <div id="riskLegend" class="risk-legend"></div>
+            <p id="riskStatus" class="muted" role="status"></p>
+            <p id="riskArea" class="risk-area"></p>
+            <details class="risk-skill"><summary data-i18n="risk_about">Как устроен прогноз и насколько он точен</summary>
+              <p data-i18n="risk_notice"></p>
+              <div id="riskSkill"></div>
+            </details>
+          </section>
+          <div class="map-legend">
+            <div class="frp-key" id="frpLegend" aria-label="FRP"></div>
+            <span data-i18n="coverage_legend">Границы архива</span>
+          </div>
+          <div class="timelapse">
+            <button id="play" class="play-button" data-i18n-aria="play_t" data-i18n-title="play_t">▶</button>
+            <input type="range" id="slider" min="0" max="0" value="0" data-i18n-aria="timeline_t">
+            <span id="dayLabel">Весь период</span>
+            <label><input type="checkbox" id="cumulative"> <span data-i18n="cumulative">накопительно</span></label>
+            <button id="allPeriod" class="ghost" data-i18n="all_period">Весь период</button>
+          </div>
+          <button id="openSheet" aria-controls="sideControls" aria-expanded="false" data-i18n="sheet_title">Фильтры и сводка</button>
+        </section>
+
+        <aside class="side-controls" id="sideControls" aria-labelledby="summaryTitle">
+          <button id="closeSheet" class="ghost" data-i18n="close_sheet">Закрыть</button>
+          <section class="area-summary panel hud">
+            <p class="eyebrow" id="summaryTitle" data-i18n="summary_title">Сводка по выборке</p>
+            <p id="summaryValue">—</p>
+            <p id="summaryUnits" data-i18n="summary_units">ячеек-суток с детекциями</p>
+            <p id="summaryCompare" class="delta" hidden></p>
+            <dl class="summary-meta">
+              <div><dt data-i18n="summary_period">Период</dt><dd id="summaryPeriod"></dd></div>
+              <div><dt data-i18n="summary_area">Область</dt><dd id="summaryArea"></dd></div>
+              <div><dt data-i18n="summary_series">Ряд</dt><dd id="seriesLabel"></dd></div>
+            </dl>
+            <div id="status" class="muted" role="status"></div>
+          </section>
+
+          <section class="step panel" id="stepArea" aria-labelledby="areaTitle">
+            <h2 id="areaTitle"><span class="step-no">01</span><span data-i18n="area_title">Область наблюдений</span></h2>
+            <div class="area-buttons">
+              <button id="drawArea" class="accent"><span class="rect-icon" aria-hidden="true"></span><span data-i18n="draw_area">Нарисовать на карте</span></button>
+              <button id="clearArea" class="ghost" data-i18n-title="clear_t" data-i18n="clear">Вся область</button>
+            </div>
+            <details class="sub">
+              <summary data-i18n="by_coords">Задать по координатам</summary>
+              <div class="pointbar">
+                <label><span data-i18n="lat">Широта</span><input id="lat" type="number" step="0.01" placeholder="47.50"></label>
+                <label><span data-i18n="lon">Долгота</span><input id="lon" type="number" step="0.01" placeholder="67.24"></label>
+                <label><span data-i18n="rad">Радиус, км</span><input id="rad" type="number" value="50" min="5" max="500"></label>
+                <button id="goPoint" class="primary" data-i18n="go">Показать область</button>
+                <button id="myLoc" class="icon-button" data-i18n-title="myloc_t" data-i18n-aria="myloc_t"><span aria-hidden="true">⌖</span></button>
+              </div>
+            </details>
+          </section>
+
+          <section class="step panel" id="stepPeriod" aria-labelledby="periodTitle">
+            <h2 id="periodTitle"><span class="step-no">02</span><span data-i18n="period_title">Период</span></h2>
+            <div class="presets" id="presets" role="group" data-i18n-aria="period_title">
+              <button class="preset" data-preset="all" data-i18n="preset_all">Весь архив</button>
+              <button class="preset" data-preset="last5" data-i18n="preset_5y">5 лет</button>
+              <button class="preset" data-preset="last" id="presetLast">2025</button>
+              <button class="preset" data-preset="spring" id="presetSpring">Весна 2025</button>
+            </div>
+            <div class="date-fields">
+              <label><span data-i18n="from">С</span><input type="date" id="start"></label>
+              <label><span data-i18n="to">По</span><input type="date" id="end"></label>
+            </div>
+          </section>
+
+          <details class="step panel advanced" id="stepAdvanced">
+            <summary><span class="step-no">03</span><span data-i18n="advanced_title">Дополнительно</span><small data-i18n="advanced_sub">точность, приборы, местность</small></summary>
+            <div class="controls">
+              <label class="check wide" data-i18n-title="viirs_scale_t"><input type="checkbox" id="normalize"><span><b data-i18n="viirs_scale">Шкала VIIRS</b><small data-i18n="viirs_scale_short">годы до 2012 приведены к VIIRS, их можно сравнивать</small></span></label>
+              <label class="land-filter">
+                <span data-i18n="land_label">Тип местности</span>
+                <select id="land" aria-describedby="landHint">
+                  <option value="" data-i18n="land_all">Все детекции</option>
+                  <option value="forest" data-i18n="land_forest">В лесу</option>
+                  <option value="cropland" data-i18n="land_cropland">На сельхозугодьях</option>
+                  <option value="both" data-i18n="land_both">Лес и сельхозугодья</option>
+                </select>
+              </label>
+              <p class="muted land-filter" id="landHint" data-i18n="land_hint"></p>
+              <label><span data-i18n="conf">Уверенность</span>
+                <select id="minConf"><option value="1" data-i18n="conf_any">любая</option><option value="2" data-i18n="conf_mid">средняя и выше</option><option value="3" data-i18n="conf_high">только высокая</option></select>
+              </label>
+              <label><span data-i18n="sensors">Приборы (карта)</span>
+                <select id="sensor"><option value="" data-i18n="s_all">все</option><option value="modis">MODIS</option><option value="viirs">VIIRS</option><option value="both" data-i18n="s_both">оба прибора</option></select>
+              </label>
+              <label class="wide"><span data-i18n="palette">Палитра</span>
+                <select id="palette"><option value="fire" data-i18n="pal_fire">Огонь</option><option value="cb" data-i18n="pal_cb">Для дальтоников</option></select>
+              </label>
+            </div>
+          </details>
+        </aside>
+      </div>
+
+      <section class="analysis-panel" data-i18n-aria="analysis_tabs">
+        <nav class="tabs" data-i18n-aria="analysis_tabs">
+          <button class="tab on" data-tab="data" aria-controls="pane-data" aria-pressed="true" data-i18n="tab_data">Обзор</button>
+          <button class="tab" data-tab="bot" aria-controls="pane-bot" aria-pressed="false" data-i18n="tab_bot">Помощник</button>
+          <button class="tab" data-tab="stages" aria-controls="pane-stages" aria-pressed="false" data-i18n="tab_stages">Ступени</button>
+        </nav>
+
+        <div class="pane" id="pane-data">
+          <section class="card panel calendar-card" id="calendarCard">
+            <h3>
+              <span><span data-i18n="cal_title">Календарь</span><small class="card-hint" id="calHint" data-i18n="cal_hint_matrix">Каждая клетка — месяц. Чем ярче, тем больше термоточек</small></span>
+              <span class="card-tools">
+                <span class="seg-small" role="group" data-i18n-aria="cal_title">
+                  <button data-calview="matrix" class="on" aria-pressed="true" data-i18n="cal_matrix">Годы × месяцы</button>
+                  <button data-calview="daily" aria-pressed="false" data-i18n="cal_daily">По дням</button>
+                </span>
+                <span class="seg-small" role="group" id="matrixModes">
+                  <button data-matrixmode="count" class="on" aria-pressed="true" data-i18n="cal_count">Количество</button>
+                  <button data-matrixmode="anomaly" aria-pressed="false" data-i18n="cal_anomaly">К норме</button>
+                </span>
+                <select id="year" data-i18n-aria="cal_year" hidden></select>
+              </span>
+            </h3>
+            <div id="calMatrix" class="cal-matrix" role="grid" data-i18n-aria="cal_matrix"></div>
+            <div class="calwrap" hidden><canvas id="cal" tabindex="0" data-i18n-aria="calendar_keyboard"></canvas></div>
+            <div class="scale" id="calScale"><span data-i18n="less">меньше</span> <i class="c0"></i><i class="c1"></i><i class="c2"></i><i class="c3"></i><i class="c4"></i> <span data-i18n="more">больше</span></div>
+          </section>
+          <section class="card panel metrics-card">
+            <h3><span><span data-i18n="kpi_title"></span><small class="card-hint" data-i18n="kpi_hint">Тот же период в другие годы</small></span><small id="kpiWin"></small></h3>
+            <div id="kpi"></div><canvas id="kpiChart"></canvas>
+            <p class="muted" data-i18n="kpi_note"></p>
+          </section>
+          <section class="card panel">
+            <h3><span><span data-i18n="anom_title"></span><small class="card-hint" data-i18n="anom_hint">Когда горело намного сильнее обычного</small></span>
+              <span class="inline"><select id="level" data-i18n-aria="anom_level"><option value="day" data-i18n="lvl_day"></option><option value="month" data-i18n="lvl_month"></option></select>
+              <label class="z-field" data-i18n-title="anom_threshold_t"><span data-i18n="anom_threshold_short">порог</span><input type="number" id="z" value="2" step="0.5" min="0.5" max="6" data-i18n-aria="anom_threshold"></label></span>
+            </h3>
+            <p id="anomInfo" class="muted"></p><ul id="anomList" class="list"></ul>
+          </section>
+          <section class="card panel">
+            <h3><span><span data-i18n="season_title"></span><small class="card-hint" data-i18n="season_sub"></small></span></h3>
+            <canvas id="season"></canvas>
+            <div class="monthrow" id="monthRow" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          </section>
+          <section class="card panel">
+            <h3><span><span data-i18n="rel_title"></span><small class="card-hint" data-i18n="rel_hint">Какой спутник что увидел</small></span><small id="relInfo"></small></h3>
+            <div class="rel" id="rel"></div>
+            <div class="legend">
+              <span><i style="background:var(--s-modis)"></i><span data-i18n="only_modis"></span></span>
+              <span><i style="background:var(--s-viirs)"></i><span data-i18n="only_viirs"></span></span>
+              <span><i style="background:var(--s-both)"></i><span data-i18n="s_both"></span></span>
+            </div>
+            <div id="stats" class="stats"></div><p id="mapLimit" class="muted"></p>
+          </section>
+          <section class="card panel">
+            <h3><span><span data-i18n="top_title"></span><small class="card-hint" data-i18n="top_sub"></small></span></h3>
+            <ul id="topList" class="list"></ul>
+          </section>
+        </div>
+
+        <div class="pane" id="pane-bot" hidden>
+          <section class="card panel">
+            <h3><span><span data-i18n="bot_title"></span><small class="card-hint" data-i18n="bot_sub"></small></span></h3>
+            <div id="chatLog" class="chatlog" role="log"></div>
+            <div class="chips">
+              <button class="chip" data-i18n-q="q_what"></button><button class="chip" data-i18n-q="q_peak"></button>
+              <button class="chip" data-i18n-q="q_anom"></button><button class="chip" data-i18n-q="q_cmp"></button>
+              <button class="chip" data-i18n-q="q_rel"></button><button class="chip" data-i18n-q="q_stage"></button>
+            </div>
+            <form id="chatForm"><input id="chatInput" data-i18n-ph="chat_ph" data-i18n-aria="chat_ph" autocomplete="off"><button type="submit" class="primary" data-i18n-aria="send_t">↑</button></form>
+          </section>
+        </div>
+
+        <div class="pane" id="pane-stages" hidden>
+          <section class="card panel">
+            <h3><span data-i18n="stages_title"></span><label class="inline"><input type="checkbox" id="showZones"><span data-i18n="on_map"></span></label></h3>
+            <p class="muted" data-i18n="stages_desc"></p>
+            <div id="zoneList"></div><p id="zoneNote" class="muted"></p><p id="zoneCaveat" class="muted"></p>
+          </section>
+        </div>
+
+        <details class="method panel">
+          <summary data-i18n="method_title"></summary>
+          <p id="coverage"></p><p data-i18n="method_body"></p><p data-i18n="foot"></p>
+          <p data-i18n="land_method"></p>
+          <a href="https://firms.modaps.eosdis.nasa.gov/download/">NASA FIRMS</a>
+          <a href="https://doi.org/10.5281/zenodo.7254221">ESA WorldCover 2021</a>
+          <p>© ESA WorldCover project 2021 / Contains modified Copernicus Sentinel data (2021) processed by ESA WorldCover consortium</p>
+          <a href="https://science.nasa.gov/earth/earth-observatory/blue-marble-next-generation/">Blue Marble · NASA Earth Observatory</a>
+        </details>
+      </section>
+    </section>
+  </main>
+
+  <div id="sheetBackdrop" hidden></div>
+  <div id="tip"></div>
+  <script src="vendor/leaflet/dist/leaflet.js"></script>
+  <script src="vendor/leaflet-draw/dist/leaflet.draw.js"></script>
+  <script src="i18n.js"></script>
+  <script src="globe.js"></script>
+  <script src="app.js"></script>
+  <script src="forecast.js"></script>
+  <script src="ui.js"></script>
+</body>
+</html>
