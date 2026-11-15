@@ -1,3 +1,4 @@
+# AI-assisted: developed with help from the Claude AI assistant (Anthropic); see README, 'Use of AI tools'.
 """Canadian Forest Fire Weather Index System (Van Wagner 1987), vectorized with NumPy.
 
 Inputs per day are arrays of equal shape: temperature (°C), relative humidity (%),

@@ -1,3 +1,4 @@
+// AI-assisted: developed with help from the Claude AI assistant (Anthropic); see README, 'Use of AI tools'.
 // FireCal UI layer: starfield, mode switch, quick start, period presets and the year × month calendar.
 // Loaded after app.js and forecast.js; uses their globals (state, map, drawControl, t, el, ...).
 (function () {

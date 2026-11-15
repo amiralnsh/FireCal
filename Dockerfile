@@ -1,3 +1,4 @@
+# AI-assisted: developed with help from the Claude AI assistant (Anthropic); see README, 'Use of AI tools'.
 # FireCal web app for Hugging Face Spaces (Docker SDK) or any container host.
 FROM python:3.12-slim
 

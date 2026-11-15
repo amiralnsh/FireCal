@@ -1,3 +1,4 @@
+# AI-assisted: developed with help from the Claude AI assistant (Anthropic); see README, 'Use of AI tools'.
 """Run FireCal on this computer and share it through a free public HTTPS link.
 
     .venv\\Scripts\\python.exe deploy\\run_public.py                 # localhost.run tunnel

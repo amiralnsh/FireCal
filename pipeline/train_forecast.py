@@ -1,3 +1,4 @@
+# AI-assisted: developed with help from the Claude AI assistant (Anthropic); see README, 'Use of AI tools'.
 """Train and evaluate the FireCal hotspot outlook, then export the 2023–2025 backtest.
 
 Run after pipeline/forecast_features.py:

@@ -1,3 +1,4 @@
+# AI-assisted: developed with help from the Claude AI assistant (Anthropic); see README, 'Use of AI tools'.
 """Export data/firecal.duckdb to compressed Parquet files in data/db/.
 
 The Parquet copy is small enough for GitHub (the DuckDB file is over 100 MB).

@@ -1,3 +1,4 @@
+# AI-assisted: developed with help from the Claude AI assistant (Anthropic); see README, 'Use of AI tools'.
 """Publish FireCal to a Hugging Face Space (Docker) and print its public URL.
 
 One-time login (stores a token on this computer, typed by you):

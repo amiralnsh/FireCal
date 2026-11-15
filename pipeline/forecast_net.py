@@ -1,3 +1,4 @@
+# AI-assisted: developed with help from the Claude AI assistant (Anthropic); see README, 'Use of AI tools'.
 """Fully convolutional PyTorch network for the gridded hotspot outlook.
 
 Input: one issue day as a (features, 64, 188) grid. Output: two logit maps,

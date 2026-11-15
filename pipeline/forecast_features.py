@@ -1,3 +1,4 @@
+# AI-assisted: developed with help from the Claude AI assistant (Anthropic); see README, 'Use of AI tools'.
 """Build daily feature grids and targets for the FireCal hotspot outlook.
 
 For every issue date t (end of UTC day t) and every 0.25° cell the script writes

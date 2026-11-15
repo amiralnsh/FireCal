@@ -13,6 +13,8 @@ FireCal turns 25 years of NASA FIRMS hotspots (Terra/Aqua MODIS since November 2
 
 ![Years × months calendar of harmonized hotspot activity](docs/calendar.jpg)
 
+> **AI disclosure:** parts of the code, the data analysis and the documentation were developed with the help of the Claude AI assistant (Anthropic). See [Use of AI tools](#use-of-ai-tools) for the details.
+
 ## Run locally
 
 Run these commands in the directory containing this README with Python 3.12 or 3.13 installed.
@@ -87,6 +89,19 @@ Use arrow keys to rotate the globe, navigate the calendar and move the compariso
 - A cell-day may contain several satellite detections or represent part of a larger fire. Satellite coverage, clouds and sensor sensitivity affect detection. The snapshot represents an archive and provides no live alerts.
 
 To rebuild the database from scratch, download raw detections with `pipeline/download.py`, then stop the server and run `pipeline/harmonize.py`, `pipeline/load_db.py` and `pipeline/calibrate.py` with the same Python interpreter. Run `pipeline/export_db.py` to refresh the compressed copy in `data/db/`. Raw and harmonized CSVs are not included in the repository because of their size. The optional `pipeline/download.py` script uses a local `FIRMS_KEY` environment variable or `.env` file.
+
+## Use of AI tools
+
+In line with the NASA Space Apps rules on Super Intelligence (SI), we disclose that the team used the **Claude AI assistant (Anthropic)** while developing FireCal. The team chose the challenge approach, the data sources, the region and the features, then reviewed and tested all AI-assisted output.
+
+- **Code (AI-assisted).** Claude helped write and revise:
+  - the hotspot outlook pipeline: `pipeline/forecast_common.py`, `forecast_weather.py`, `fwi.py`, `forecast_features.py`, `forecast_net.py` and `train_forecast.py`;
+  - the user-interface redesign: `frontend/index.html`, `style.css`, `ui.js` and `forecast.js`, plus parts of `app.js` and `i18n.js`;
+  - backend additions in `backend/main.py`: the outlook API, gzip, CSV streaming, memory limits and building the database from `data/db/`;
+  - the helper scripts in `deploy/`, `pipeline/export_db.py` and the `.bat` launchers.
+- **Data analysis (AI-assisted).** Claude helped evaluate the harmonization (VIIRS gaps, the trend in the VIIRS/MODIS ratio), design the train/validation/test splits and interpret the model metrics reported above. All numbers come from running the code in this repository on NASA data.
+- **Text (AI-assisted).** Parts of this README, the in-app help texts and their translations were drafted with Claude and edited by the team.
+- **Images, video, audio.** None were generated with SI. The screenshots in `docs/` are captures of the running application. The globe imagery is NASA Blue Marble. No NASA logos or other branding were generated or modified.
 
 ## Third-party resources
 

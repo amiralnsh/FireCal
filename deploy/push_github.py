@@ -1,3 +1,4 @@
+# AI-assisted: developed with help from the Claude AI assistant (Anthropic); see README, 'Use of AI tools'.
 """Publish FireCal to a public GitHub repository without installing Git.
 
 Uses the GitHub REST API: creates the repository on the first run and replaces
@@ -156,7 +157,8 @@ def main():
         sys.exit(f"Ошибка обновления ветки: {update.status_code} {update.text[:300]}")
     gh.call("PATCH", f"/repos/{repo}", json={"description": DESCRIPTION})
     gh.call("PUT", f"/repos/{repo}/topics", json={"names": [
-        "nasa-space-apps", "wildfire", "modis", "viirs", "firms", "remote-sensing", "fastapi", "pytorch"]})
+        "nasa-space-apps", "wildfire", "modis", "viirs", "firms", "remote-sensing", "fastapi", "pytorch",
+        "ai-assisted"]})
     print(f"\nГОТОВО: https://github.com/{repo}")
 
 

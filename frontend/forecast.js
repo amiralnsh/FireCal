@@ -1,3 +1,4 @@
+// AI-assisted: developed with help from the Claude AI assistant (Anthropic); see README, 'Use of AI tools'.
 // Hotspot outlook backtest: a separate map layer with its own issue date and horizon.
 (function () {
   var button = el("#riskToggle"), controls = el("#riskControls"), date = el("#riskDate");

@@ -1,3 +1,4 @@
+# AI-assisted: developed with help from the Claude AI assistant (Anthropic); see README, 'Use of AI tools'.
 """Download daily NASA POWER (MERRA-2) weather for the whole archive footprint.
 
 NASA POWER serves MERRA-2 on its native 0.5° × 0.625° grid without an API key.

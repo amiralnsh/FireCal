@@ -1,3 +1,4 @@
+# AI-assisted: developed with help from the Claude AI assistant (Anthropic); see README, 'Use of AI tools'.
 """Shared grid, periods and paths for the FireCal hotspot outlook."""
 
 from pathlib import Path
